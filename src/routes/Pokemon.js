@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { Pokemon, Type } = require('../db');
 const axios = require('axios');
 const router = Router();
-const {getData, getDbPokemons, filterPokeInfoFromApi, getApiPokemons} = require('./handlers')
+const {getData, getDbPokemons, filterPokeInfoFromApi} = require('./handlers')
 
 
 router.get('/', async(req, res)=>{
@@ -130,6 +130,25 @@ router.post('/', async(req, res)=>{
     else res.send('To create a Pokemon it needs to have a name')
 
 
+})
+
+router.delete('/:id', async(req, res)=>{
+    
+    const {id} = req.params
+
+    if(id){
+
+        try{
+            await Pokemon.destroy({where: {id: id}})
+
+            res.send('Pokemon was deleted')
+        }
+
+        catch(e){
+            
+            res.status(400).send(e)
+        }
+    }
 })
 
 module.exports = router;

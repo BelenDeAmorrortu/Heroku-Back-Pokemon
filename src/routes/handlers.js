@@ -27,8 +27,6 @@ function filterPokeInfoFromApi(data){
         defence: stats[2].base_stat,
         speed: stats[5].base_stat, 
         img: sprites.other.dream_world.front_default,
-        // img: sprites.versions['generation-v']['black-white'].animated.front_default,
-        //  img: sprites.other['official-artwork'].front_default,
         source: 'Api'
 
     }
@@ -37,13 +35,6 @@ function filterPokeInfoFromApi(data){
 }
 
 async function getApiPokemons(){
-
-    let urls = [] // [`https://pokeapi.co/api/v2/pokemon/1`, `https://pokeapi.co/api/v2/pokemon/2`, `https://pokeapi.co/api/v2/pokemon/3`]
-    
-    for(let i=1; i<= 40; i++){
-    
-        urls.push(`https://pokeapi.co/api/v2/pokemon/${i}`)
-    }
     
     async function asyncAxios(url){
     
@@ -51,10 +42,12 @@ async function getApiPokemons(){
     
         return request.data
     }
+
+    let { data } = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=50')
+
+    let arrayOfPromises = data.results.map(p => asyncAxios(p.url))
     
-    const arrayOfPromises = urls.map(url => asyncAxios(url))
-    
-    const promiseAll = await Promise.all(arrayOfPromises)
+    let promiseAll = await Promise.all(arrayOfPromises)
     
     let filteredPromiseAll = promiseAll.map( p => filterPokeInfoFromApi(p) )
 
